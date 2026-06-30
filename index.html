@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Ejecutivo de Ejecución Presupuestaria</title>
+<style>
+  :root{
+    --verde:#1E7D32;
+    --verde-osc:#14542A;
+    --verde-claro:#EAF4EC;
+    --oro:#C9A227;
+    --oro-claro:#F7EFD3;
+    --tinta:#1B2420;
+    --gris:#5B6B62;
+    --linea:#DCE5DF;
+    --papel:#F6F8F6;
+    --blanco:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--papel);
+    color:var(--tinta);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Encabezado ---------- */
+  header{
+    background:linear-gradient(120deg,var(--verde-osc),var(--verde));
+    color:var(--blanco);
+    padding:28px 36px 24px;
+  }
+  .marca{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .escudo{
+    width:46px;height:46px;border-radius:50%;
+    background:var(--oro);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:var(--verde-osc);font-size:18px;letter-spacing:.5px;
+    flex-shrink:0;
+  }
+  .marca small{display:block;color:var(--oro-claro);font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+  .marca strong{font-size:15px;font-weight:600}
+  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px}
+  header .sub{color:#CFE6D5;font-size:14px;margin-top:4px}
+  .periodo{
+    display:inline-block;margin-top:14px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+    padding:5px 14px;border-radius:999px;font-size:13px;
+  }
+  .periodo b{color:var(--oro-claro)}
+
+  /* ---------- Contenedor ---------- */
+  main{max-width:1080px;margin:0 auto;padding:28px 24px 48px}
+
+  .aviso{
+    background:var(--oro-claro);
+    border-left:4px solid var(--oro);
+    color:#6b5614;
+    font-size:13px;
+    padding:10px 16px;border-radius:6px;margin-bottom:26px;
+  }
+
+  /* ---------- Tarjetas KPI ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
+  .kpi{
+    background:var(--blanco);border:1px solid var(--linea);border-radius:12px;
+    padding:18px 18px 16px;position:relative;overflow:hidden;
+  }
+  .kpi::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--verde)}
+  .kpi.oro::before{background:var(--oro)}
+  .kpi .et{font-size:12px;color:var(--gris);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+  .kpi .val{font-size:27px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+  .kpi .un{font-size:13px;color:var(--gris);font-weight:600;margin-left:3px}
+  .kpi .pie{font-size:12px;margin-top:8px;font-weight:600}
+  .up{color:var(--verde)}.down{color:#B23A3A}
+
+  /* ---------- Bloques ---------- */
+  .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:24px}
+  .panel{background:var(--blanco);border:1px solid var(--linea);border-radius:12px;padding:22px}
+  .panel h2{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .panel h2::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--oro)}
+  .panel .nota{font-size:12px;color:var(--gris);margin-bottom:18px}
+
+  /* ---------- Barras ---------- */
+  .barra{margin-bottom:16px}
+  .barra .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .barra .top b{font-weight:600}
+  .barra .top span{color:var(--gris);font-variant-numeric:tabular-nums}
+  .pista{height:11px;background:var(--verde-claro);border-radius:6px;overflow:hidden}
+  .relleno{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--verde),#3FA85C)}
+  .relleno.alerta{background:linear-gradient(90deg,var(--oro),#E0BE4A)}
+
+  /* ---------- Donut ---------- */
+  .donut-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+  .donut{
+    width:170px;height:170px;border-radius:50%;
+    background:conic-gradient(var(--verde) 0 73.4%, var(--verde-claro) 73.4% 100%);
+    display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .donut::after{content:"";position:absolute;width:118px;height:118px;border-radius:50%;background:var(--blanco)}
+  .donut .centro{position:relative;text-align:center;z-index:1}
+  .donut .centro b{display:block;font-size:32px;font-weight:800;color:var(--verde);line-height:1}
+  .donut .centro small{font-size:12px;color:var(--gris)}
+  .leyenda{display:flex;gap:18px;margin-top:18px;font-size:12px;color:var(--gris)}
+  .leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  .i-eje{background:var(--verde)}.i-pend{background:var(--verde-claro);border:1px solid var(--linea)}
+
+  /* ---------- Tabla ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{
+    text-align:left;color:var(--verde);font-size:11px;text-transform:uppercase;
+    letter-spacing:.6px;padding:9px 10px;border-bottom:2px solid var(--verde-claro);
+  }
+  thead th.num{text-align:right}
+  tbody td{padding:10px;border-bottom:1px solid var(--linea);font-variant-numeric:tabular-nums}
+  tbody td.num{text-align:right}
+  tbody tr:hover{background:var(--verde-claro)}
+  .chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+  .chip.ok{background:var(--verde-claro);color:var(--verde)}
+  .chip.med{background:var(--oro-claro);color:#8a6d12}
+  .chip.baj{background:#FBE6E6;color:#B23A3A}
+
+  /* ---------- Pie ---------- */
+  footer{
+    max-width:1080px;margin:0 auto;padding:18px 24px 36px;
+    color:var(--gris);font-size:12px;border-top:1px solid var(--linea);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  footer b{color:var(--verde)}
+
+  @media(max-width:880px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:520px){
+    .kpis{grid-template-columns:1fr}
+    header{padding:22px 20px}
+    header h1{font-size:21px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marca">
+    <div class="escudo">UTH</div>
+    <div>
+      <small>Diplomado en IA para la Empresa</small>
+      <strong>Universidad Tecnológica de Honduras</strong>
+    </div>
+  </div>
+  <h1>Panel Ejecutivo de Ejecución Presupuestaria</h1>
+  <div class="sub">Seguimiento del gasto público por institución — tablero de apoyo a la toma de decisiones</div>
+  <span class="periodo">Periodo fiscal: <b>Enero – Diciembre 2025</b> · Corte al 30/06/2025</span>
+</header>
+
+<main>
+  <div class="aviso">
+    ⚠ Datos ilustrativos con fines académicos. Las cifras de este tablero son ficticias y no representan información oficial de ninguna institución.
+  </div>
+
+  <!-- KPIs -->
+  <section class="kpis">
+    <div class="kpi">
+      <div class="et">Presupuesto aprobado</div>
+      <div class="val">L 248.6<span class="un">mil M</span></div>
+      <div class="pie up">▲ 6.2% vs. 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="et">Monto ejecutado</div>
+      <div class="val">L 182.4<span class="un">mil M</span></div>
+      <div class="pie up">▲ Avance acumulado</div>
+    </div>
+    <div class="kpi oro">
+      <div class="et">% de ejecución</div>
+      <div class="val">73.4<span class="un">%</span></div>
+      <div class="pie up">▲ +4.1 pts vs. meta</div>
+    </div>
+    <div class="kpi">
+      <div class="et">Instituciones activas</div>
+      <div class="val">42</div>
+      <div class="pie down">▼ 3 bajo el umbral</div>
+    </div>
+  </section>
+
+  <!-- Barras + Donut -->
+  <div class="grid2">
+    <div class="panel">
+      <h2>Ejecución por secretaría</h2>
+      <p class="nota">Porcentaje del presupuesto institucional ejecutado al corte</p>
+
+      <div class="barra">
+        <div class="top"><b>Secretaría de Finanzas</b><span>81%</span></div>
+        <div class="pista"><div class="relleno" style="width:81%"></div></div>
+      </div>
+      <div class="barra">
+        <div class="top"><b>Secretaría de Salud</b><span>78%</span></div>
+        <div class="pista"><div class="relleno" style="width:78%"></div></div>
+      </div>
+      <div class="barra">
+        <div class="top"><b>Secretaría de Educación</b><span>74%</span></div>
+        <div class="pista"><div class="relleno" style="width:74%"></div></div>
+      </div>
+      <div class="barra">
+        <div class="top"><b>Secretaría de Infraestructura</b><span>62%</span></div>
+        <div class="pista"><div class="relleno alerta" style="width:62%"></div></div>
+      </div>
+      <div class="barra">
+        <div class="top"><b>Secretaría de Seguridad</b><span>69%</span></div>
+        <div class="pista"><div class="relleno" style="width:69%"></div></div>
+      </div>
+      <div class="barra">
+        <div class="top"><b>Secretaría de Agricultura</b><span>55%</span></div>
+        <div class="pista"><div class="relleno alerta" style="width:55%"></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Ejecución global</h2>
+      <p class="nota">Avance total consolidado</p>
+      <div class="donut-wrap">
+        <div class="donut">
+          <div class="centro"><b>73.4%</b><small>ejecutado</small></div>
+        </div>
+        <div class="leyenda">
+          <span><i class="i-eje"></i>Ejecutado</span>
+          <span><i class="i-pend"></i>Pendiente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="panel">
+    <h2>Detalle por programa presupuestario</h2>
+    <p class="nota">Montos en millones de Lempiras (L) — cifras ilustrativas</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Programa</th>
+          <th class="num">Aprobado</th>
+          <th class="num">Ejecutado</th>
+          <th class="num">% Ejec.</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gestión administrativa central</td>
+          <td class="num">38,420</td><td class="num">33,100</td>
+          <td class="num">86%</td><td><span class="chip ok">En meta</span></td>
+        </tr>
+        <tr>
+          <td>Inversión en salud pública</td>
+          <td class="num">52,180</td><td class="num">40,700</td>
+          <td class="num">78%</td><td><span class="chip ok">En meta</span></td>
+        </tr>
+        <tr>
+          <td>Educación básica y media</td>
+          <td class="num">61,950</td><td class="num">45,840</td>
+          <td class="num">74%</td><td><span class="chip ok">En meta</span></td>
+        </tr>
+        <tr>
+          <td>Obras de infraestructura vial</td>
+          <td class="num">44,300</td><td class="num">27,470</td>
+          <td class="num">62%</td><td><span class="chip med">Vigilancia</span></td>
+        </tr>
+        <tr>
+          <td>Desarrollo agrícola rural</td>
+          <td class="num">21,750</td><td class="num">11,960</td>
+          <td class="num">55%</td><td><span class="chip baj">Rezagado</span></td>
+        </tr>
+        <tr>
+          <td>Seguridad ciudadana</td>
+          <td class="num">29,800</td><td class="num">20,560</td>
+          <td class="num">69%</td><td><span class="chip med">Vigilancia</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  <span>Elaborado en el marco del <b>Diplomado en Inteligencia Artificial para la Empresa</b> — UTH</span>
+  <span>Tarea #4 · Actividad B · Dashboard publicado con GitHub Pages</span>
+</footer>
+
+</body>
+</html>
